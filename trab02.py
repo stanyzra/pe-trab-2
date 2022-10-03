@@ -4,6 +4,7 @@ Created on Mon Sep 26 14:01:51 2022
 
 @author: Collection-Acer01
 """
+import numpy as np
 MEDIUMIDH = 550
 HIGHTIDH = 700
 VERYHIGHTIDH = 800
@@ -22,8 +23,45 @@ def getTotal(line):
     sum=0
     for value in line:
         sum=sum+value
-    return sum  
-def calcProbaility(transitionMatrix):
+    return sum 
+ 
+ 
+def buildProjectMatrix(probMatrix,dataMatrix,transitionMatrix):
+    totalCountrys = getTotal(dataMatrix)
+    probCountrys = []
+    for element in dataMatrix:
+        probCountrys.append(element/totalCountrys)
+  
+    print("=================================================================")
+    print("ELEMENTOS")
+    m1 = np.array(probCountrys)
+    print(f'Muito Alto: {dataMatrix[3]} Alto: {dataMatrix[2]} | Médio: {dataMatrix[1]} | Baixo: {dataMatrix[0]}\n')
+    print("=================================================================")
+    print("=================================================================")
+    print("MATRIZ DE DADOS")
+  
+    print(m1)
+    print("=================================================================")
+    print("=================================================================")
+    print("MATRIZ DE TRANSICAO")
+    m4=np.array(transitionMatrix)
+    print(m4)
+    print("=================================================================")
+    
+    print("=================================================================")
+    print("MATRIZ DOS PROBABILIDADE")
+    m2= np.array(probMatrix)
+    print(m2)
+    print("=================================================================")
+    print("=================================================================")
+    print("MATRIZ DE PROJECAO")
+
+    m3 = np.dot(m1,m2) 
+    print(m3) 
+    print("=================================================================")
+    return
+    
+def calcProbability(transitionMatrix):
     probMatrix = [
         [0,0,0,0],
         [0,0,0,0],
@@ -38,11 +76,8 @@ def calcProbaility(transitionMatrix):
             probMatrix[i][j]=value/total
             j=j+1
         i=i+1
-    print()
-    print("[")
-    for line in probMatrix:
-        print(line)
-    print("]")
+   
+    return probMatrix
         
         
 def classifyData(matrix):
@@ -73,8 +108,6 @@ def classifyData(matrix):
                          year1900[3] =  year1900[3] + 1
                     else:
                          year2000[3] =  year2000[3] + 1
-    print(year1900)
-    print(year2000)
     return year1900,year2000
 
 def processData(matrix):
@@ -124,11 +157,9 @@ def processData(matrix):
                     transitionMatrix[3][2]=transitionMatrix[3][2]+1
             elif(verifierData.isVeryHight(idh2000)):
                     transitionMatrix[3][3]=transitionMatrix[3][3]+1   
-    print("[")
-    for line in transitionMatrix:
-        print(line)
-    print("]")
     return transitionMatrix
+
+
 def readDataBase():
     file = open("./hdi-database-from-1990-to-2000.csv")
     fileLines = file.readlines()
@@ -147,9 +178,12 @@ def readDataBase():
 def main():
     dataMatrix = readDataBase()
     dataMatrix.pop(0)
-    classifyData(dataMatrix)
+    year1900,year2000=classifyData(dataMatrix)
     transitionMatrix = processData(dataMatrix)
-    calcProbaility(transitionMatrix)
+    probMatrix = calcProbability(transitionMatrix)
+    buildProjectMatrix(probMatrix,year2000,transitionMatrix)
+    
+    
     
 
 if __name__ == "__main__":
